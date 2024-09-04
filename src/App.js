@@ -43,6 +43,14 @@ const fetchAPI = function(date) {
   return result;
 };
 
+const submitAPI = function(formData) {
+  return true;
+};
+
+const submitForm = (formData) => {
+  return submitAPI(formData)
+};
+
 export function availableTimesReducer(state, action) {
   switch (action.type) {
     case "INITIALIZE_TIMES":
@@ -114,7 +122,7 @@ function App() {
         <Route path='/hero' element={<Hero />} />
         <Route path='/about' element={<About />} />
         <Route path='/highlights' element={<Highlights />} />
-        <Route path='/bookings' element={<Bookings formData={formData} setFormData={setFormData} updatedTimes={availableTimeSlots} setReservations={setReservations} />} />
+        <Route path='/bookings' element={<Bookings formData={formData} setFormData={setFormData} updatedTimes={availableTimeSlots} setReservations={setReservations} submitForm={submitForm} />} />
         <Route path='/footer' element={<Footer />} />
         <Route path='/confirmed-booking' element={<ConfirmedBooking />} />
       </Routes>

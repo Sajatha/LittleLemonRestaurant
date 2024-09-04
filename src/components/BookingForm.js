@@ -3,8 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-const BookingForm = ({ formData, setFormData, updatedTimes, setReservations }) => {
+const BookingForm = ({ formData, setFormData, updatedTimes, setReservations, submitForm }) => {
 
 
     const [isChecked, setIsChecked] = useState(false);
@@ -57,17 +56,23 @@ const BookingForm = ({ formData, setFormData, updatedTimes, setReservations }) =
                 clone.push(formData);
                 return clone;
             });
+            setIsChecked(false)
             setFormData({
                 date: "",
                 guests: "",
                 time: "",
                 occasion: ""
-            })
-            navigate('/confirmed-booking');
-            setIsChecked(false)
+            });
+            const submitResponse = submitForm(formData);
+            if(submitResponse) {
+                navigate('/confirmed-booking');
+            }else {
+                alert("Submission failed.");
+            }
         } else {
             alert("Form validation failed");
         }
+        
     };
 
     // after handlesubmit nd form validation, the data is stored in reservation data. so we have to set reservation and setResrvation to store and update data
