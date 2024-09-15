@@ -3,26 +3,21 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../images/logo.jpg'; 
 
-
 function Nav() {
-     
-
-    useEffect (()=>{
+    useEffect(() => {
         const navToggle = document.querySelector('#navToggle');
         const nav = document.querySelector('nav');
         const navIcon = document.querySelectorAll('.navIcon');
         const hamburger = document.querySelector('#hamburger');
 
-        const func = () => {
+        const navToggleClick = () => {
             nav.classList.toggle('open');
             navIcon.forEach(icon => {
                 icon.classList.toggle('hidden');
             })
         };
 
-        navToggle.addEventListener("click", func);
-
-        window.addEventListener("resize", () => {
+        const resizer = () => {
             if(document.body.clientWidth > 720) {
                 nav.classList.remove('open');
                 navIcon.forEach(icon => {
@@ -30,11 +25,14 @@ function Nav() {
                 });
                 hamburger.classList.remove('hidden');
             }
-            
-        });
+        };
+
+        navToggle.addEventListener("click", navToggleClick);
+        window.addEventListener("resize", resizer);
 
         return () => {
-            navToggle.removeEventListener('click', func);
+            navToggle.removeEventListener('click', navToggleClick);
+            window.removeEventListener("resize", resizer);
         }
 
     },[])
@@ -72,9 +70,7 @@ function Nav() {
                 </nav>
             </div>    
         </header>
-
     )
-
 }
 
 export default Nav;

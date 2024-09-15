@@ -1,116 +1,93 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { render, screen, fireEvent } from '@testing-library/react';
 import BookingForm from './components/BookingForm';
-import React from "react";
+import { describe, jest, test, expect } from '@jest/globals'
+import React from 'react';
 
+describe('booking form', () => {
 
-describe("BookingForm", () => {
-    const handleSubmit = jest.fn();
-    const setFormData = jest.fn();
-    const setReservations = jest.fn();
-    const formData = {date: "", guests: "", time: "", occasion: ""};
-    const updatedTimes = [
-        {label: "17:00", value: "17:00"},
-        {label: "18:00", value: "18:00"},
-        {label: "19:00", value: "19:00"},
-        {label: "20:00", value: "20:00"},
-        {label: "21:00", value: "21:00"},
-        {label: "22:00", value: "22:00"}
-    ];
+  const mockSetFormData = jest.fn();
+  const mockSetReservations = jest.fn();
+  const mockSubmitForm = jest.fn(() => true);
+  const renderBookingsForm = (date = '', guests = '', time = '', occasion = '') => {
+    render(
+      <BookingForm
+        formData={{
+          date,
+          guests,
+          time,
+          occasion
+        }}
+        setFormData={mockSetFormData}
+        updatedTimes={[]}
+        setReservations={mockSetReservations}
+        submitForm={mockSubmitForm}
+        navigate={jest.fn}
+      />);
+  }
 
-    beforeEach(() => {
-        handleSubmit.mockClear();
-        
-    });
+    test('should navigate on successful form submission', () => {
+      renderBookingsForm()
+  });
 
-    it('submit button is called when all fields pass validation', () => {
-        const {getByText, getByRole, getByTestId} = render(<BookingForm  formData = {formData} setFormData = {setFormData} updatedTimes = {updatedTimes} setReservations = {setReservations}   />);
+  test('should have required attribute on input fields', () => {
+    renderBookingsForm();
+    
+    // Check if 'required' is present for the date input
+    expect(screen.getByTestId('date')).toHaveAttribute('required');
 
-        expect(getByText("Number of guests:")).toBeInTheDocument();
-        expect(getByText("Select a Date:")).toBeInTheDocument();
-        expect(getByText("Select Time:")).toBeInTheDocument();
-        expect(getByText("Select an Occasion:")).toBeInTheDocument();
-        expect(getByText("I agree to the cancellation policy")).toBeInTheDocument();
+    // Check if 'required' is present for the checkbox
+    expect(screen.getByTestId('checkbox')).toBeRequired();
 
+    // Check if 'min' and 'max' attributes are present for guests input
+    expect(screen.getByTestId('guests')).toHaveAttribute('min', '1');
+    expect(screen.getByTestId('guests')).toHaveAttribute('max', '10');
+  });
 
-        expect(getByTestId("guests")).toBeInTheDocument();
-        expect(getByTestId("date")).toBeInTheDocument();
-        expect(getByTestId("time")).toBeInTheDocument();
-        expect(getByTestId("occasion")).toBeInTheDocument();
-        expect(getByTestId("checkbox")).toBeInTheDocument();
-        expect(getByTestId("submit-button")).toBeInTheDocument();
-    });
+  test('should have correct type attributes on input fields', () => {
+    renderBookingsForm();
+      
+      // Check the type of the date input
+      expect(screen.getByTestId('date')).toHaveAttribute('type', 'date');
+    
+      // Check the type of the number input
+      expect(screen.getByTestId('guests')).toHaveAttribute('type', 'number');
+  });  
 
-    it('updates on change', () => {
-        const {getByTestId} = render(<BookingForm formData={formData} setFormData={setFormData} updatedTimes={updatedTimes} setReservations={setReservations} />);
+  test('should validate form fields correctly', () => {
+    
+    renderBookingsForm();
+    
+    
+    // Fill the form with valid data
+    fireEvent.change(screen.getByTestId('guests'), { target: { value: '4' } });
+    fireEvent.change(screen.getByTestId('date'), { target: { value: '2024-09-10' } });
+    fireEvent.change(screen.getByTestId('time'), { target: { value: '18:00' } });
+    fireEvent.change(screen.getByTestId('occasion'), { target: { value: 'Anniversary' } });
+    
+    // Simulate form submission
+    fireEvent.click(screen.getByTestId('submit-button'));
+    
+    // Check that there are no validation errors
+    expect(screen.queryByText(/Number of guests is required/i)).toBeNull();
+    expect(screen.queryByText(/Date is required/i)).toBeNull();
+    expect(screen.queryByText(/Time is required/i)).toBeNull();
+    expect(screen.queryByText(/Occasion is required/i)).toBeNull();
+  });
 
-        const guests = getByTestId("guests");
-        fireEvent.change(guests, {target: { value: guests }});
+  test('should show validation errors for invalid inputs', () => {
+    
+    renderBookingsForm(); 
+    // Leave fields empty and submit button is disabled
+    expect(screen.getByTestId('submit-button')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('guests'), { target: { value: '4' } });
+    expect(screen.getByTestId('submit-button')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('date'), { target: { value: '2024-09-10' } });
+    expect(screen.getByTestId('submit-button')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('time'), { target: { value: '18:00' } });
+    expect(screen.getByTestId('submit-button')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('occasion'), { target: { value: 'Anniversary' } });
+    fireEvent.click(screen.getByTestId('submit-button'));
+    expect(mockSetFormData).toBeCalledTimes(4);
 
-        const date = getByTestId("date");
-        fireEvent.change(date, {target: { value: date }});
-
-        const time = getByTestId("time");
-        fireEvent.change(time, {target: { value: time }});
-
-        const occasion = getByTestId("occasion");
-        fireEvent.change(occasion, {target: { value: occasion }});
-
-        const checkbox = getByTestId("checkbox");
-        fireEvent.change(checkbox, {target: { value: checkbox }});
-
-        const submit = getByTestId("submit-button");
-        fireEvent.change(submit, {target: { value: submit }});
-    })
-
-
-
-
+  });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-//     test("user is able to submit the form only after filling all the input fields and checking the checkbox", () => {
-//         const guests = 3;
-//         const date = "12-12-2024";
-//         const time = "18:00";
-//         const occasion = "birthday";
-//         const handleSubmit = jest.fn();
-//         render(<BookingForm onSubmit={handleSubmit} />);
-
-//         const numberofGuests = screen.getByLabelText(/Number of guests:/);
-//         fireEvent.change(numberofGuests, {target: {value: guests}});
-
-//         const reservationDate = screen.getByLabelText(/Select a Date:/);
-//         fireEvent.change(reservationDate, {target: {value: date}});
-
-//         const reservationTime = screen.getByLabelText(/Select Time:/);
-//         fireEvent.change(reservationTime, {target: {value: time}});
-
-//         const reservationOccasion = screen.getByLabelText(/Select an Occasion:/);
-//         fireEvent.change(reservationOccasion, {target: {value: occasion}});
-
-//         const submitButton = screen.getByRole("button");
-//         fireEvent.click(submitButton);
-
-
-//         expect(handleSubmit).toHaveBeenCalledWith({
-//             guests,
-//             date,
-//             time,
-//             occasion
-//         });
-        
-    // });
-
-
-

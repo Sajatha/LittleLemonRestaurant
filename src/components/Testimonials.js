@@ -9,7 +9,7 @@ function Testimonials() {
             <h3 className='testimonial-heading'>Testimonials</h3>
             <section className='testimonials-container'>
                 <article className='testimonials-block' id='block1'>
-                    <img className='testimonial-img' src={david}></img>
+                    <img className='testimonial-img' alt='David' src={david}></img>
                     <h3 className='testimonials-name'>David</h3>
                     <div className="stars">
                         <div className="star"></div>
@@ -21,7 +21,7 @@ function Testimonials() {
                     <p className='testimonial-p'>Awesome food , best service and beautiful place!! One of the best restaurants in town!! Go for it!!</p>
                 </article>
                 <article className='testimonials-block' id='block2'>
-                    <img className='testimonial-img' src={sunitha}></img>
+                    <img className='testimonial-img' alt='Sunitha' src={sunitha}></img>
                     <h3 className='testimonials-name'>Sunitha</h3>  
                     <div className="stars">
                         <div className="star"></div>
@@ -33,7 +33,7 @@ function Testimonials() {
                     <p className='testimonial-p'>Fantastic food! It was very fresh and flavorful. We could tell it was just made for us. A little slow, but worth the wait. Yum!</p>
                 </article>
                 <article className='testimonials-block' id='block3'>
-                    <img className='testimonial-img' src={rasi}></img>
+                    <img className='testimonial-img' alt='Rasi' src={rasi}></img>
                     <h3 className='testimonials-name'>Rashmika</h3>
                     <div className="stars">
                         <div className="star"></div>
